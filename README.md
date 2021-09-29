@@ -1,3 +1,3 @@
-# L Italian book project
+# JSON prove
 
-The project aim to be a complete vision of all the books about the lord of the rings in italiang languages.
+Varie prove con file Json, url Json, Json da openLibrary,...
