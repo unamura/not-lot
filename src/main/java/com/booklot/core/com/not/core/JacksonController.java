@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.not.core.dao.JacksonFeignClient;
+import com.not.core.dao.OrderForVisual;
 import com.not.core.dto.Doc;
 import com.not.core.dto.SearchOpenLibrary;
 
@@ -34,6 +35,18 @@ public class JacksonController {
 
 	@Autowired
 	private JacksonFeignClient jfclient;
+
+	@Autowired
+	private OrderForVisual visual;
+
+	@RequestMapping(value = "/open")
+	public List<Doc> displayList(@RequestParam(defaultValue = "3") int numSt,
+			@RequestParam(defaultValue = "2") int numEl, 
+			@RequestParam(defaultValue = "not") String order)
+			throws MalformedURLException, IOException {
+
+		return visual.presentListData(numSt, numEl, order);
+	}
 
 	@RequestMapping(value = "/ns")
 	public List<Doc> inputStreamLoop(@RequestParam(defaultValue = "10") int numSt,
@@ -46,21 +59,17 @@ public class JacksonController {
 		SearchOpenLibrary sol = mapper.readValue(is, new TypeReference<SearchOpenLibrary>() {
 		});
 
-		// bl = true;
-		// order = "";
 		List<Doc> resList = new ArrayList<Doc>();
 		Comparator<Doc> com = Comparator.comparing(d -> d.getFirst_publish_year());
 
 		resList = sol.getDocs().stream().skip(numSt).limit(numEl).collect(Collectors.toList());
 
 		if (resList != null) {
-			// if (bl) {
 			if (order.equals("asc"))
 				resList.sort(com);
 			else if (order.equals("desc")) {
 				resList.sort(com.reversed());
 			}
-			// }
 		}
 
 		return resList;
